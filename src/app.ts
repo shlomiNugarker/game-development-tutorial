@@ -1,3 +1,11 @@
+let playerState = 'sit'
+const dropdown = document.getElementById('animations')
+dropdown?.addEventListener('change', (ev) => {
+  if (ev.target instanceof HTMLSelectElement) {
+    playerState = ev.target.value
+  }
+})
+
 const canvas = <HTMLCanvasElement>document.getElementById('canvas1')
 const ctx = canvas.getContext('2d')!
 
@@ -16,7 +24,7 @@ const staggerFrames = 5
 
 const spriteAnimation: any = []
 
-const animationStates: any[] = [
+const animationStates = [
   {
     name: 'idle',
     frames: 7,
@@ -77,9 +85,10 @@ function animate() {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
   //   ctx.drawImage(image,sx,sy,sw,sh,dx,dy,dw,dh) // Reference
   let position =
-    Math.floor(gameFrame / staggerFrames) % spriteAnimation['run'].loc.length
+    Math.floor(gameFrame / staggerFrames) %
+    spriteAnimation[playerState].loc.length
   let frameX = spriteWidth * position
-  let frameY = spriteAnimation['run'].loc[position].y
+  let frameY = spriteAnimation[playerState].loc[position].y
   ctx.drawImage(
     playerImage,
     frameX,
