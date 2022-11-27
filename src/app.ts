@@ -586,9 +586,9 @@ class Explosion {
   }
 }
 
-window.addEventListener('click', (ev) => {
-  createAnimation(ev)
-})
+// window.addEventListener('click', (ev) => {
+//   createAnimation(ev)
+// })
 // window.addEventListener('mousemove', (ev) => {
 //   createAnimation(ev)
 // })
@@ -614,3 +614,254 @@ function animate7() {
 }
 
 animate7()
+
+// // **************  Project 5: Point & shoot game **********************************
+
+const canvas8 = <HTMLCanvasElement>document.getElementById('canvas8')
+const ctx8 = canvas8.getContext('2d')!
+canvas8.width = 700
+canvas8.height = 500
+
+const collosionCanvas = <HTMLCanvasElement>(
+  document.getElementById('collosionCanvas')
+)
+const collosionCtx = canvas8.getContext('2d')!
+collosionCanvas.width = 700
+collosionCanvas.height = 500
+
+let score = 0
+ctx8.font = '50px Impact'
+
+let gameOver = false
+
+let timeToNextRaven = 0
+let ravenInterval = 500
+let lastTime = 0
+
+let raves: Raven[] = []
+
+class Raven {
+  width: number
+  height: number
+  x: number
+  y: number
+  directionX: number
+  directionY: number
+  markedForDeletion: boolean
+  image: any
+  spriteWidth: number
+  spriteHeight: number
+  sizeModifier: number
+  frame: number
+  maxFrame: number
+  timeSinceFlap: number
+  flapInterval: number
+  randomColors: number[]
+  color: string
+  constructor() {
+    this.spriteWidth = 271
+    this.spriteHeight = 194
+    this.sizeModifier = Math.random() * 0.6 + 0.4
+    this.width = this.spriteWidth * this.sizeModifier
+    this.height = this.spriteHeight * this.sizeModifier
+    this.x = canvas8.width
+    this.y = Math.random() * (canvas8.height - this.height)
+    this.directionX = Math.random() * 5 + 3
+    this.directionY = Math.random() * 5 - 2.5
+    this.markedForDeletion = false
+    this.image = new Image()
+    this.image.src = '../src/assets/raven.png'
+    this.frame = 0
+    this.maxFrame = 4
+    this.timeSinceFlap = 0
+    this.flapInterval = 90
+    this.randomColors = [
+      Math.floor(Math.random() * 255),
+      Math.floor(Math.random() * 255),
+      Math.floor(Math.random() * 255),
+    ]
+    this.color =
+      'rgb(' +
+      this.randomColors[0] +
+      ',' +
+      this.randomColors[1] +
+      ',' +
+      this.randomColors[2] +
+      ')'
+  }
+
+  update(deltatime: number) {
+    if (this.y < 0 || this.y > canvas8.height - this.height) {
+      this.directionY = this.directionY * -1
+    }
+    this.x -= this.directionX
+    this.y += this.directionY
+    if (this.x < 0 - this.width) this.markedForDeletion = true
+    this.timeSinceFlap += deltatime
+    if (this.timeSinceFlap > this.flapInterval) {
+      if (this.frame > this.maxFrame) this.frame = 0
+      else this.frame++
+      this.timeSinceFlap = 0
+    }
+  }
+
+  draw() {
+    collosionCtx.fillStyle = this.color
+    collosionCtx.fillRect(this.x, this.y, this.width, this.height)
+    ctx8.drawImage(
+      this.image,
+      this.frame * this.spriteWidth,
+      0,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    )
+  }
+}
+
+let explosions2: Explosion2[] = []
+
+class Explosion2 {
+  image: HTMLImageElement
+  spriteWidth: number
+  spriteHeight: number
+  size: any
+  x: any
+  y: any
+  frame: number
+  timeSinceLastFrame: number
+  frameInterval: number
+  markedForDeletion: boolean
+  constructor(x: number, y: number, size: number) {
+    this.image = new Image()
+    this.image.src = '../src/assets/boom.png'
+    this.spriteWidth = 200
+    this.spriteHeight = 179
+    this.size = size
+    this.x = x
+    this.y = y
+    this.frame = 0
+    //  this.sound = new Audio('')
+    //  this.sound.src = new Audio('')
+    this.timeSinceLastFrame = 0
+    this.frameInterval = 200
+    this.markedForDeletion = false
+  }
+  update(deltatime: number) {
+    // if(this.frame === 0 ) this.sound.play()
+    this.timeSinceLastFrame += deltatime
+    if (this.timeSinceLastFrame > this.frameInterval) {
+      this.frame++
+      this.timeSinceLastFrame = 0
+      if (this.frame > 5) this.markedForDeletion = true
+    }
+  }
+  draw() {
+    ctx8.drawImage(
+      this.image,
+      this.frame * this.spriteWidth,
+      0,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x,
+      this.y - this.size / 4,
+      this.size,
+      this.size
+    )
+  }
+}
+
+let particles: Particle[] = []
+
+class Particle {
+  x: number
+  y: number
+  radius: number
+  markedForDeletion: boolean
+  speedX: number
+  color: number
+  maxRadius: number
+  constructor(x: number, y: number, size: number, color: number) {
+    this.x = x
+    this.y = y
+    this.radius = (Math.random() * size) / 10
+    this.maxRadius = Math.random() * 20 + 35
+    this.markedForDeletion = false
+    this.speedX = Math.random() * 1 + 0.5
+    this.color = color
+  }
+
+  update() {
+    this.x += this.speedX
+    this.radius += 0.2
+    if (this.radius > this.maxRadius) this.markedForDeletion = false
+  }
+  draw() {
+    ctx8.beginPath()
+    ctx8.fillStyle = '' + this.color
+    ctx8.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+    ctx8.fill()
+  }
+}
+
+function drawScore() {
+  ctx8.fillStyle = 'black'
+  ctx8.fillText('Score: ' + score, 50, 75)
+  ctx8.fillStyle = 'white'
+  ctx8.fillText('Score: ' + score, 50, 50)
+}
+
+function drawGameOver() {
+  ctx8.textAlign = 'center'
+  ctx8.fillStyle = 'black'
+  ctx8.fillText(
+    'GAME OVER, your score is ' + score,
+    canvas8.width / 2,
+    canvas8.height / 2
+  )
+}
+
+window.addEventListener('click', (ev) => {
+  const detectPixelColorr = collosionCtx.getImageData(ev.x, ev.y, 1, 1)
+  console.log({ detectPixelColorr })
+  const pc = detectPixelColorr.data
+  raves.forEach((obj) => () => {
+    if (
+      obj.randomColors[0] === pc[0] &&
+      obj.randomColors[1] === pc[1] &&
+      obj.randomColors[2] === pc[2]
+    ) {
+      obj.markedForDeletion = true
+      score++
+      explosions2.push(new Explosion2(obj.x, obj.y, obj.width))
+    }
+  })
+})
+
+function animate8(timeStamp: number) {
+  ctx8.clearRect(0, 0, canvas8.width, canvas8.height)
+  collosionCtx.clearRect(0, 0, canvas8.width, canvas8.height)
+  let deltatime = timeStamp - lastTime
+  lastTime = timeStamp
+  timeToNextRaven += deltatime
+  if (timeToNextRaven > ravenInterval) {
+    raves.push(new Raven())
+    timeToNextRaven = 0
+    raves.sort((a, b) => {
+      return a.width - b.width // big one to be first
+    })
+  }
+  drawScore()
+  ;[...raves, ...explosions2].forEach((obj) => obj.update(deltatime))
+  ;[...raves, ...explosions2].forEach((obj) => obj.draw())
+  raves = raves.filter((obj) => !obj.markedForDeletion)
+  explosions2 = explosions2.filter((obj) => !obj.markedForDeletion)
+  if (!gameOver) requestAnimationFrame(animate8)
+  else drawGameOver()
+}
+animate8(0)
+
+/// stop the video at 3:41:35

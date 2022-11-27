@@ -46,6 +46,25 @@ canvas {
   width: 700px;
   height: 500px;
 }
+#canvas8 {
+  border: 5px solid rgb(0, 0, 0);
+  background-color: rgb(193, 193, 193);
+  width: 700px;
+  height: 500px;
+  /* position: absolute; */
+}
+#collosionCanvas {
+  background-color: rgb(130, 16, 16);
+  width: 700px;
+  height: 500px;
+  /* position: absolute; */
+  /* opacity: 0; */
+}
+
+.proj-5-container {
+  position: relative;
+  text-align: center;
+}
 
 .controls {
   position: absolute;
