@@ -7,7 +7,7 @@ export class Player {
   height: number
   x: number
   y: number
-  image: any
+  image: HTMLImageElement
   speed: number
   maxSpeed: number
   vy: number
@@ -20,6 +20,7 @@ export class Player {
   fps: number
   frameInterval: number
   frameTimer: number
+  gameSpeed: number | undefined
 
   constructor(game: Game) {
     this.game = game
@@ -29,7 +30,7 @@ export class Player {
     this.y = this.game.height - this.height - this.game.groundMargin
     this.vy = 0 // vertical y
     this.weight = 1
-    this.image = document.getElementById('player')
+    this.image = document.getElementById('player') as HTMLImageElement
 
     this.frameX = 0 // frames to choose player sprite img
     this.frameY = 0
@@ -40,7 +41,7 @@ export class Player {
     this.frameTimer = 0
 
     this.speed = 0
-    this.maxSpeed = 10
+    this.maxSpeed = 4
 
     // the order is important (enum):
     this.state = [
@@ -98,8 +99,9 @@ export class Player {
     return this.y >= this.game.height - this.height - this.game.groundMargin
   }
 
-  setState(state: number) {
+  setState(state: number, speed: number) {
     this.currentState = this.state[state]
+    this.game.speed = this.game.maxSpeed * speed
     this.currentState.enter()
   }
 }
