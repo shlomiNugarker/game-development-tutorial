@@ -1,5 +1,5 @@
 import { Game } from './main'
-import { Sitting, Running, Jumping, Falling } from './playerState'
+import { Sitting, Running, Jumping, Falling, Rolling } from './playerState'
 
 export class Player {
   game: Game
@@ -49,12 +49,14 @@ export class Player {
       new Running(this),
       new Jumping(this),
       new Falling(this),
+      new Rolling(this),
     ]
     this.currentState = this.state[0]
     this.currentState.enter()
   }
 
   update(input: string[], deltaTime: number) {
+    this.checkCollision()
     this.currentState.handleInput(input)
     // horizontal movement
     this.x += this.speed
@@ -82,6 +84,9 @@ export class Player {
     }
   }
   draw(context: CanvasRenderingContext2D) {
+    if (this.game.debug)
+      context.strokeRect(this.x, this.y, this.width, this.height)
+
     context.drawImage(
       this.image,
       this.frameX * this.width,
@@ -103,5 +108,21 @@ export class Player {
     this.currentState = this.state[state]
     this.game.speed = this.game.maxSpeed * speed
     this.currentState.enter()
+  }
+  checkCollision() {
+    this.game.enemies.forEach((enemy) => {
+      if (!enemy.x || !enemy.y || !enemy.width || !enemy.height) return
+      if (
+        enemy.x < this.x + this.width &&
+        enemy.x + enemy.width > this.x &&
+        enemy.y < this.y + this.height &&
+        enemy.y + enemy.height > this.y
+      ) {
+        enemy.markedForDeletion = true
+        this.game.score++
+      } else {
+        //
+      }
+    })
   }
 }

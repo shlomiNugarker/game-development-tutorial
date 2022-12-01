@@ -3,6 +3,7 @@ import { Player } from './player'
 import { InputHandler } from './input'
 import { Background } from './background'
 import { FlyingEnemy, GroundEnemy, Enemy, ClimbingEnemy } from './enemies'
+import { UI } from './UI'
 
 const canvas = <HTMLCanvasElement>document.getElementById('canvas')
 const ctx = canvas.getContext('2d')!
@@ -21,6 +22,10 @@ export class Game {
   enemies: Enemy[]
   enemyTimer: number
   enemyInterval: number
+  debug: boolean
+  score: number
+  fontColor: string
+  UI: UI
 
   constructor(width: number, height: number) {
     this.width = width
@@ -30,10 +35,14 @@ export class Game {
     this.maxSpeed = 3
     this.player = new Player(this)
     this.background = new Background(this)
-    this.input = new InputHandler()
+    this.input = new InputHandler(this)
+    this.UI = new UI(this)
     this.enemies = []
     this.enemyTimer = 0
     this.enemyInterval = 1000
+    this.debug = true
+    this.score = 0
+    this.fontColor = 'black'
   }
 
   update(deltaTime: number) {
@@ -60,6 +69,7 @@ export class Game {
     this.enemies.forEach((enemy) => {
       enemy.draw(context)
     })
+    this.UI.draw(context)
   }
   addEnemy() {
     if (this.speed > 0 && Math.random() < 0.5) {

@@ -1,19 +1,23 @@
+import { Game } from './main'
+
 export class InputHandler {
   keys: string[]
-  constructor() {
+  game: Game
+  constructor(game: Game) {
     this.keys = []
+    this.game = game
     window.addEventListener('keydown', (ev) => {
       if (
         (ev.key === 'ArrowDown' ||
           ev.key === 'ArrowUp' ||
           ev.key === 'ArrowLeft' ||
           ev.key === 'ArrowRight' ||
-          ev.key === 'ArrowEnter') &&
+          ev.key === 'ArrowEnter' ||
+          ev.key === 'Enter') &&
         this.keys.indexOf(ev.key) === -1
       ) {
         this.keys.push(ev.key)
-      }
-      console.log(ev.key, this.keys)
+      } else if (ev.key === 'd') this.game.debug = !this.game.debug
     })
 
     window.addEventListener('keyup', (ev) => {
@@ -22,7 +26,8 @@ export class InputHandler {
         ev.key === 'ArrowUp' ||
         ev.key === 'ArrowLeft' ||
         ev.key === 'ArrowRight' ||
-        ev.key === 'ArrowEnter'
+        ev.key === 'ArrowEnter' ||
+        ev.key === 'Enter'
       ) {
         this.keys.splice(this.keys.indexOf(ev.key), 1)
       }
@@ -30,3 +35,5 @@ export class InputHandler {
     })
   }
 }
+
+// 8:43:09

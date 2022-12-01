@@ -43,6 +43,16 @@ export class Enemy {
       this.markedForDeletion = true
   }
   draw(context: CanvasRenderingContext2D) {
+    if (
+      this.game &&
+      this.x &&
+      this.y &&
+      this.width &&
+      this.height &&
+      this.game.debug
+    )
+      context.strokeRect(this.x, this.y, this.width, this.height)
+
     if (this.image && this.width && this.height && this.x && this.y) {
       context.drawImage(
         this.image,
@@ -137,3 +147,5 @@ export class ClimbingEnemy extends Enemy {
     context.stroke()
   }
 }
+
+// 8:31:39
