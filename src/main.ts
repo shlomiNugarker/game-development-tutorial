@@ -4,6 +4,7 @@ import { InputHandler } from './input'
 import { Background } from './background'
 import { FlyingEnemy, GroundEnemy, Enemy, ClimbingEnemy } from './enemies'
 import { UI } from './UI'
+import { Dust, Particle } from './particles'
 
 const canvas = <HTMLCanvasElement>document.getElementById('canvas')
 const ctx = canvas.getContext('2d')!
@@ -26,6 +27,7 @@ export class Game {
   score: number
   fontColor: string
   UI: UI
+  particles: Particle[]
 
   constructor(width: number, height: number) {
     this.width = width
@@ -38,11 +40,14 @@ export class Game {
     this.input = new InputHandler(this)
     this.UI = new UI(this)
     this.enemies = []
+    this.particles = []
     this.enemyTimer = 0
     this.enemyInterval = 1000
     this.debug = true
     this.score = 0
     this.fontColor = 'black'
+    this.player.currentState = this.player.states[0]
+    this.player.currentState.enter()
   }
 
   update(deltaTime: number) {
@@ -60,6 +65,12 @@ export class Game {
       if (enemy.markedForDeletion)
         this.enemies.splice(this.enemies.indexOf(enemy), 1)
     })
+
+    // handle particles
+    this.particles.forEach((particle, index) => {
+      particle.update()
+      if (particle.markedForDeletion) this.particles.splice(index, 1)
+    })
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -68,6 +79,9 @@ export class Game {
 
     this.enemies.forEach((enemy) => {
       enemy.draw(context)
+    })
+    this.particles.forEach((particle) => {
+      if (particle instanceof Dust) particle.draw(context)
     })
     this.UI.draw(context)
   }
@@ -87,8 +101,6 @@ let lastTime = 0
 
 function animate(timeStamp: number) {
   const deltaTime = timeStamp - lastTime
-  // console.log(deltaTime)
-
   lastTime = timeStamp
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   game.update(deltaTime)

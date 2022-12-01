@@ -1,5 +1,6 @@
 import { Game } from './main'
 import { Sitting, Running, Jumping, Falling, Rolling } from './playerState'
+// import { Dust } from './particles'
 
 export class Player {
   game: Game
@@ -12,8 +13,8 @@ export class Player {
   maxSpeed: number
   vy: number
   weight: number
-  state: Sitting[]
-  currentState: Sitting
+  states: Sitting[]
+  currentState: Sitting | undefined
   frameX: number
   frameY: number
   maxFrame: number
@@ -44,20 +45,18 @@ export class Player {
     this.maxSpeed = 4
 
     // the order is important (enum):
-    this.state = [
-      new Sitting(this),
-      new Running(this),
-      new Jumping(this),
-      new Falling(this),
-      new Rolling(this),
+    this.states = [
+      new Sitting(this.game),
+      new Running(this.game),
+      new Jumping(this.game),
+      new Falling(this.game),
+      new Rolling(this.game),
     ]
-    this.currentState = this.state[0]
-    this.currentState.enter()
   }
 
   update(input: string[], deltaTime: number) {
     this.checkCollision()
-    this.currentState.handleInput(input)
+    if (this.currentState) this.currentState.handleInput(input)
     // horizontal movement
     this.x += this.speed
     // handle input also here for moving with all states
@@ -105,9 +104,9 @@ export class Player {
   }
 
   setState(state: number, speed: number) {
-    this.currentState = this.state[state]
+    this.currentState = this.states[state]
     this.game.speed = this.game.maxSpeed * speed
-    this.currentState.enter()
+    if (this.currentState) this.currentState.enter()
   }
   checkCollision() {
     this.game.enemies.forEach((enemy) => {
