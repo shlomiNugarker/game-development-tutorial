@@ -14,7 +14,7 @@ export class Player {
   vy: number
   weight: number
   states: Sitting[]
-  currentState: Sitting | undefined
+  currentState: Sitting | Running | Jumping | Falling | Rolling | undefined
   frameX: number
   frameY: number
   maxFrame: number

@@ -1,5 +1,5 @@
 import { Game } from './main'
-import { Dust } from './particles'
+import { Dust, Fire } from './particles'
 
 // enum:
 const states = {
@@ -52,7 +52,7 @@ export class Running extends State {
   }
 
   handleInput(input: string[]) {
-    this.game.particles.push(
+    this.game.particles.unshift(
       new Dust(
         this.game,
         this.game.player.x + this.game.player.width * 0.5,
@@ -116,6 +116,14 @@ export class Rolling extends State {
   }
 
   handleInput(input: string[]) {
+    this.game.particles.unshift(
+      new Fire(
+        this.game,
+        this.game.player.x + this.game.player.width * 0.5,
+        this.game.player.y + this.game.player.height * 0.5
+      )
+    )
+
     if (!input.includes('Enter') && this.game.player.onGround()) {
       this.game.player.setState(states.RUNNING, 1)
     } else if (!input.includes('Enter') && !this.game.player.onGround()) {

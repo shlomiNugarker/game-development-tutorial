@@ -50,6 +50,39 @@ export class Dust extends Particle {
 
 export class Splash extends Particle {}
 
-export class Fire extends Particle {}
+export class Fire extends Particle {
+  image: HTMLImageElement
+  angle: number
+  va: number
 
-// 8:55:04
+  constructor(game: Game, x: number, y: number) {
+    super(game)
+    this.image = document.getElementById('fire') as HTMLImageElement
+    this.size = Math.random() * 100 + 50
+    this.x = x
+    this.y = y
+    this.speedX = 1
+    this.speedY = 1
+    this.angle = 0
+    this.va = Math.random() * 0.2 - 0.1
+  }
+  update(): void {
+    super.update()
+    this.angle += this.va
+    if (this.x) this.x += Math.sin(this.angle * 5)
+  }
+  draw(context: CanvasRenderingContext2D) {
+    if (!this.x || !this.y || !this.size) return
+    context.save()
+    context.translate(this.x, this.y)
+    context.rotate(this.angle)
+    context.drawImage(
+      this.image,
+      -this.size * 0.5,
+      -this.size * 0.5,
+      this.size,
+      this.size
+    )
+    context.restore()
+  }
+}

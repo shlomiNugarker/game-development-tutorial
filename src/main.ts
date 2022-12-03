@@ -4,7 +4,7 @@ import { InputHandler } from './input'
 import { Background } from './background'
 import { FlyingEnemy, GroundEnemy, Enemy, ClimbingEnemy } from './enemies'
 import { UI } from './UI'
-import { Dust, Particle } from './particles'
+import { Dust, Fire, Particle } from './particles'
 
 const canvas = <HTMLCanvasElement>document.getElementById('canvas')
 const ctx = canvas.getContext('2d')!
@@ -28,6 +28,7 @@ export class Game {
   fontColor: string
   UI: UI
   particles: Particle[]
+  maxParticles: number
 
   constructor(width: number, height: number) {
     this.width = width
@@ -41,6 +42,7 @@ export class Game {
     this.UI = new UI(this)
     this.enemies = []
     this.particles = []
+    this.maxParticles = 50
     this.enemyTimer = 0
     this.enemyInterval = 1000
     this.debug = true
@@ -71,6 +73,9 @@ export class Game {
       particle.update()
       if (particle.markedForDeletion) this.particles.splice(index, 1)
     })
+    if (this.particles.length > this.maxParticles) {
+      this.particles = this.particles.slice(0, 50)
+    }
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -82,6 +87,7 @@ export class Game {
     })
     this.particles.forEach((particle) => {
       if (particle instanceof Dust) particle.draw(context)
+      else if (particle instanceof Fire) particle.draw(context)
     })
     this.UI.draw(context)
   }

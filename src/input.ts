@@ -31,7 +31,7 @@ export class InputHandler {
       ) {
         this.keys.splice(this.keys.indexOf(ev.key), 1)
       }
-      console.log(ev.key, this.keys)
+      // console.log(ev.key, this.keys)
     })
   }
 }
