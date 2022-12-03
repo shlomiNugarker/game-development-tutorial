@@ -1,5 +1,12 @@
 import { Game } from './main'
-import { Sitting, Running, Jumping, Falling, Rolling } from './playerState'
+import {
+  Sitting,
+  Running,
+  Jumping,
+  Falling,
+  Rolling,
+  Diving,
+} from './playerState'
 // import { Dust } from './particles'
 
 export class Player {
@@ -51,6 +58,7 @@ export class Player {
       new Jumping(this.game),
       new Falling(this.game),
       new Rolling(this.game),
+      new Diving(this.game),
     ]
   }
 
@@ -64,14 +72,17 @@ export class Player {
     else if (input.includes('ArrowLeft')) this.speed = -this.maxSpeed
     //
     else this.speed = 0
+    // horizontal boundaries
     if (this.x < 0) this.x = 0
     if (this.x > this.game.width - this.width)
       this.x = this.game.width - this.width
     // vertical movement
-
     this.y += this.vy
     if (!this.onGround()) this.vy += this.weight
     else this.vy = 0
+    // vertical boundaries
+    if (this.y > this.game.height - this.height - this.game.groundMargin)
+      this.y = this.game.height - this.height - this.game.groundMargin
 
     // sprite animation:
     if (this.frameTimer > this.frameInterval) {

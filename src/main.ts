@@ -4,7 +4,7 @@ import { InputHandler } from './input'
 import { Background } from './background'
 import { FlyingEnemy, GroundEnemy, Enemy, ClimbingEnemy } from './enemies'
 import { UI } from './UI'
-import { Dust, Fire, Particle } from './particles'
+import { Dust, Fire, Particle, Splash } from './particles'
 
 const canvas = <HTMLCanvasElement>document.getElementById('canvas')
 const ctx = canvas.getContext('2d')!
@@ -88,6 +88,7 @@ export class Game {
     this.particles.forEach((particle) => {
       if (particle instanceof Dust) particle.draw(context)
       else if (particle instanceof Fire) particle.draw(context)
+      else if (particle instanceof Splash) particle.draw(context)
     })
     this.UI.draw(context)
   }
