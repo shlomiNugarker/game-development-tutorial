@@ -96,7 +96,7 @@ export class Falling extends State {
   }
   enter() {
     this.game.player.frameX = 0
-    this.game.player.maxFrame = 6
+    this.game.player.maxFrame = 8
     this.game.player.frameY = 2
   }
 
@@ -138,7 +138,7 @@ export class Rolling extends State {
       this.game.player.onGround()
     ) {
       this.game.player.vy -= 27
-    } else if (input.includes('ArrowDown')) {
+    } else if (input.includes('ArrowDown') && !this.game.player.onGround()) {
       this.game.player.setState(states.DIVING, 0)
     }
   }
@@ -176,6 +176,24 @@ export class Diving extends State {
       }
     } else if (input.includes('Enter') && this.game.player.onGround()) {
       this.game.player.setState(states.ROLLING, 2)
+    }
+  }
+}
+export class Hit extends State {
+  constructor(game: Game) {
+    super('HIT', game)
+  }
+  enter() {
+    this.game.player.frameX = 0
+    this.game.player.maxFrame = 10
+    this.game.player.frameY = 4
+  }
+
+  handleInput(_input: string[]) {
+    if (this.game.player.frameX >= 10 && this.game.player.onGround()) {
+      this.game.player.setState(states.RUNNING, 1)
+    } else if (this.game.player.frameX >= 10 && !this.game.player.onGround()) {
+      this.game.player.setState(states.FALLING, 2)
     }
   }
 }

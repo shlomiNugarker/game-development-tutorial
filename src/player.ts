@@ -6,7 +6,10 @@ import {
   Falling,
   Rolling,
   Diving,
+  Hit,
 } from './playerState'
+
+import { CollisionAnimation } from './collisionAnimation'
 // import { Dust } from './particles'
 
 export class Player {
@@ -59,6 +62,7 @@ export class Player {
       new Falling(this.game),
       new Rolling(this.game),
       new Diving(this.game),
+      new Hit(this.game),
     ]
   }
 
@@ -68,8 +72,13 @@ export class Player {
     // horizontal movement
     this.x += this.speed
     // handle input also here for moving with all states
-    if (input.includes('ArrowRight')) this.speed = this.maxSpeed
-    else if (input.includes('ArrowLeft')) this.speed = -this.maxSpeed
+    if (input.includes('ArrowRight') && this.currentState !== this.states[6])
+      this.speed = this.maxSpeed
+    else if (
+      input.includes('ArrowLeft') &&
+      this.currentState !== this.states[6]
+    )
+      this.speed = -this.maxSpeed
     //
     else this.speed = 0
     // horizontal boundaries
@@ -129,9 +138,21 @@ export class Player {
         enemy.y + enemy.height > this.y
       ) {
         enemy.markedForDeletion = true
-        this.game.score++
-      } else {
-        //
+        this.game.collisions.push(
+          new CollisionAnimation(
+            this.game,
+            enemy.x + enemy.width * 0.5,
+            enemy.y + enemy.height * 0.5
+          )
+        )
+        if (
+          this.currentState === this.states[4] ||
+          this.currentState === this.states[5]
+        ) {
+          this.game.score++
+        } else {
+          this.setState(6, 0)
+        }
       }
     })
   }
