@@ -68,6 +68,7 @@ export class Running extends State {
     }
   }
 }
+
 export class Jumping extends State {
   constructor(game: Game) {
     super('JUMPING', game)

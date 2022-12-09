@@ -55,7 +55,7 @@ export class Game {
     this.score = 0
     this.fontColor = 'black'
     this.time = 0
-    this.maxTime = 10000
+    this.maxTime = 20000
     this.gameOver = false
     this.player.currentState = this.player.states[0]
     this.player.currentState.enter()
@@ -136,3 +136,5 @@ function animate(timeStamp: number) {
 animate(0)
 
 // })
+
+// 09:24:48

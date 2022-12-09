@@ -27,6 +27,7 @@ export class Enemy {
     this.frameTimer = 0
     this.markedForDeletion = false
   }
+
   update(deltaTime: number) {
     // movement
     if (this.x) this.x -= (this.game && this.speedX + this.game.speed) || 0
